@@ -1,4 +1,4 @@
-                    == Author & Version ==
+# Author & Version 
 YubiServe has been written by Alessio Periloso <mail *at* periloso.it>
 Version 1.0: 21/05/2010
 Version 2.0: 19/11/2010
@@ -7,7 +7,7 @@ Version 3.0: 14/12/2010
 Version 3.1: 24/03/2011
 + Fixed issue #3, #4, #5, #6
 
-                      == Description ==
+# Description
 This simple service allows to authenticate Yubikeys and OATH Tokens using
 only a small sqlite database (the mysql support is optional!)
 The code has been released under GNU license (license into LICENSE file)
@@ -17,21 +17,21 @@ The project is divided into two parts:
  - The validation server (yubiserve.py)
 
 
-                       == Installation ==
+# Installation
 Installation is pretty simple, you just have to install few python packages:
 
 Under Debian, you can run:
-  apt-get install python python-crypto python-openssl
+`apt-get install python python-crypto python-openssl`
 
 Under Mageia, you will need to use:
-  urpmi python-pycrypto python-OpenSSL
+  `urpmi python-pycrypto python-OpenSSL`
 
 If you want to add the sqlite support, you should run:
-  apt-get install python-sqlite
+  `apt-get install python-sqlite`
   sqlite3 is also supported, which is included with python in RHEL6.
 
 Or, if you want to add the mysql support, you should run:
-  apt-get install python-mysqldb
+  `apt-get install python-mysqldb`
 If you chosen the mysql support, you must create a database and create the
 tables. The mysql dump is at src/dump.mysql.
 
@@ -39,7 +39,7 @@ tables. The mysql dump is at src/dump.mysql.
 Then, you have to generate the certificate for ssl validation, so if you don't
 already have a certificate you have to issue the following command to self-sign
 one:
-openssl req -new -x509 -keyout yubiserve.pem -out yubiserve.pem -days 365 -nodes
+`openssl req -new -x509 -keyout yubiserve.pem -out yubiserve.pem -days 365 -nodes`
 
 A good idea would be taking a look at yubiserve.cfg, to configure the validation server settings.
 
@@ -48,7 +48,7 @@ to a directory, add the keys and launch the server (or, if you prefer
 you can launch the server before adding the keys, it doesn't matter).
 
 
-              == The database management tool ==
+## The database management tool
 The database management tool helps you to manage keys in the database.
 For detailed help, run the database management tool with ./dbconf.py
 
@@ -59,7 +59,7 @@ Everything is managed through nicknames, to make keys easy to remember
 who belong to.
 
 For example, to add a new yubikey, write:
-./dbconf.py -ya alessio vvkdtkjureru 980a8608b307 f1dc9c6585d600d06f9aae1abea2969e
+`./dbconf.py -ya alessio vvkdtkjureru 980a8608b307 f1dc9c6585d600d06f9aae1abea2969e`
 
 In this example, 'alessio' is the key nickname, 'vvkdtkjureru' is the
 key public identity (the one you can see at the beginning of your OTPs),
@@ -68,7 +68,7 @@ you program your key), and the last parameter is the AES Key.
 
 
 To add a new OATH/HOTP:
-./dbconf.py -ha alessio 4rvn24642402 f03ddacdfebb6396f60d7045f41de68f5c5e1c3f
+`./dbconf.py -ha alessio 4rvn24642402 f03ddacdfebb6396f60d7045f41de68f5c5e1c3f`
 
 In this other example, 'alessio' is still the nickname, '4rvn24642402' is
 the public identity of the token (it could be also 1, 2, 'alessio' or
@@ -76,17 +76,18 @@ whatever you want; the Yubico implementation is 12 characters long)
 
 
 To add a new API key:
-./dbconf.py -aa alessio
+`./dbconf.py -aa alessio`
 
 When you add a new API key, the configuration tool will return both
 the api key (ex. 'UkxFMnNFNTV4clRYUExSOWlONzQ=') and the API key id
 meant to be used later in your queries to the Yubiserve validation server.
 
 
-             == The Yubiserve Validation Server ==
+##The Yubiserve Validation Server
 Understanding how to use the Yubiserve web application is pretty simple.
 You just have to run it (./yubiserve.py) and send your queries through
 HTTP GET connections.
+
 The default listening port is 8000, the default listening ip is 0.0.0.0
 (so you can connect to it from other machines). If you need it to answer
 only from local machine, you can change the ip to 127.0.0.1.
@@ -98,6 +99,7 @@ for the SSL port, "yubiserveHOST" for the listening ip.
 When you connect to the server (ex. http://192.168.0.1:8000/), it will
 answer with a simple page, asking you Yubico Yubikeys OTPs or OATH/HOTP
 tokens.
+
 The Yubico Yubikey needs only one parameter: the OTP.
 The OATH/HOTP tokens needs two parameters: the OTP itself (6 or 8 digits)
 and the Token Identifier. The token identifier can be any character string
@@ -110,7 +112,7 @@ the string is not automatically added, so you will need to insert your ID
 in the second box to allow the Validation Server to find your own identity.
 
 
-          == Querying the Yubiserve Validation Server ==
+## Querying the Yubiserve Validation Server
 Querying the Yubiserve Validation Server is pretty simple.
 For Yubico Yubikeys, you will need to send a HTTP GET connection to:
 http://<server ip>:<server port>/wsapi/2.0/verify?otp=<your otp>
@@ -118,10 +120,10 @@ ex.: http://192.168.0.1:8000/wsapi/2.0/verify?otp=vvnjbbkvjbcnhiretjvjfebbrdgrjj
 This way you will try to authenticate to it, the simplest way possible.
 The response will be something like:
 
-otp=vvnjbbkvjbcnhiretjvjfebbrdgrjjchdhtbderrdbhj
+```otp=vvnjbbkvjbcnhiretjvjfebbrdgrjjchdhtbderrdbhj
 status=OK
 t=2010-11-20T23:54:35
-h=
+h=```
 
 As you can see, the 'h' parameter is not set, and this is because we didn't use
 the signature through API Key. To use it, just add the 'id=<api key id>'
@@ -129,10 +131,10 @@ parameter we had when we added the API Key.
 ex.: http://192.168.0.1:8000/wsapi/2.0/verify?otp=vvnjbbkvjbcnhiretjvjfebbrdgrjjchdhtbderrdbhj&id=1
 This time the response will be like:
 
-otp=vvnjbbkvjbcnhiretjvjfebbrdgrjjchdhtbderrdbhj
+```otp=vvnjbbkvjbcnhiretjvjfebbrdgrjjchdhtbderrdbhj
 status=OK
 t=2010-11-21T00:00:03
-h=6lrhQPKo1I/RQA1KPnjpuiOvVMc=
+h=6lrhQPKo1I/RQA1KPnjpuiOvVMc=```
 
 To check the server signature, check the source code (you will have to do the
 exact same procedure to generate it and then just check if they are equal), or
@@ -154,10 +156,10 @@ an authentication through a LCD Token was made, so the Yubiserve needed to know 
 the token belonged to, and the publicid parameter was added.
 The response, like Yubico Yubikey queries, is the following:
 
-otp=80l944311056173483
+```otp=80l944311056173483
 status=OK
 t=2010-11-21T00:04:59
-h=
+h=```
 
 The 'h' parameter is not set, because we didn't specified the API Key id. To use the
 server signature, we will need to add the 'id' parameter, like in the following query:
@@ -166,12 +168,12 @@ ex.: http://192.168.0.1:8000/wsapi/2.0/oathverify?otp=173483&publicid=80l9443110
 
 And this would be the the response:
 
-otp=80l944311056173483
+```otp=80l944311056173483
 status=OK
 t=2010-11-21T00:10:56
-h=vYoG9Av8uG6OqVkmMFuANi4fyWw=
+h=vYoG9Av8uG6OqVkmMFuANi4fyWw=```
 
-                == Basic monitoring of the Yubiserve Validation Server ==
+## Basic monitoring of the Yubiserve Validation Server
 
 The yubiserve tool allows you to set up basic monitoring by making an http request using
 the URI /healthcheck.
@@ -185,7 +187,8 @@ Options are:
 /healthcheck?service=oathtoken
 /healthcheck?service=yubikeys
 
-Example: curl -s http://localhost:8000/healthcheck?service=yubikeys
+Example: 
+`curl -s http://localhost:8000/healthcheck?service=yubikeys`
 
 Output format is:
 OK: (no message)
